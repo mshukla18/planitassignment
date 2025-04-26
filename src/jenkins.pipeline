@@ -1,0 +1,24 @@
+pipeline {
+  agent any
+  tools {
+  maven 'maven'
+}
+stages {
+  stage("Test") {
+  steps {
+  git branch: 'main', url: 'https://github.com/mshukla18/planitassignment.git'
+}
+}
+
+stage('Run Maven tests') {
+steps {
+sh 'mvn clean test'
+}
+}
+}
+post {
+always {
+junit '**/target/surefire-reports/*.xml'
+}
+}
+}

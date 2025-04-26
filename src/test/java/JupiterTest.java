@@ -9,10 +9,7 @@ import org.planit.pages.ContactPage;
 import org.planit.pages.HomePage;
 import org.planit.pages.ShoppingPage;
 import org.testng.Assert;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -27,13 +24,14 @@ public class JupiterTest {
     Properties properties;
     final String propertyFileLocation = "src/test/resources/test.properties";
 
+    @Parameters("browser")
     @BeforeClass
-    void setup() throws IOException {
+    void setup(String browser) throws IOException {
         properties = new Properties();
         FileReader reader = new FileReader(propertyFileLocation);
         properties.load(reader);
 
-        webDriver = getDriver();
+        webDriver = getDriver(browser);
     }
 
     @BeforeMethod
@@ -46,8 +44,9 @@ public class JupiterTest {
         webDriver.close();
     }
 
-    WebDriver getDriver() {
-        switch (properties.getProperty("application.browser")) {
+
+    WebDriver getDriver(String browser) {
+        switch (browser) {
             case "safari":
                 WebDriverManager.safaridriver().setup();
                 return new SafariDriver();
@@ -136,4 +135,6 @@ public class JupiterTest {
             logger.info("Subtotal of item " + k + " is correct");
         });
     }
+
+    //static void assertString(String expectedVal, String actualVal, String )
 }
