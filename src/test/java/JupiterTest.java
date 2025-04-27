@@ -57,11 +57,8 @@ public class JupiterTest {
         }
     }
 
-    @Test
-    public void testContactPageErrorMsgs() {
-        Map<String, String> testData = Map.of("forename","John",
-                "email", "test_example@example.com",
-                "message", "Some text");
+    @Test(dataProvider = "contact", dataProviderClass = JupiterDataProvider.class)
+    public void testContactPageErrorMsgs(String forename, String email, String message) {
         HomePage homePage = new HomePage(webDriver);
         homePage.clickContactLink();
         ContactPage contactPage = new ContactPage(webDriver);
@@ -75,41 +72,35 @@ public class JupiterTest {
         Assert.assertEquals(contactPage.verifyErrorDisplayed("message"),
                 true, "message error is not displayed");
         logger.info("Message error is displayed");
-        contactPage.enterForename(testData.get("forename"));
+        contactPage.enterForename(forename);
         Assert.assertEquals(contactPage.verifyErrorDisplayed("forename"),
                 false, "forename error was not supposed to be displayed");
         logger.info("forename error is not displayed");
-        contactPage.enterEmail(testData.get("email"));
+        contactPage.enterEmail(email);
         Assert.assertEquals(contactPage.verifyErrorDisplayed("email"),
                 false, "email error was not supposed to be displayed");
         logger.info("Email error is not displayed");
-        contactPage.enterMessage(testData.get("message"));
+        contactPage.enterMessage(message);
         Assert.assertEquals(contactPage.verifyErrorDisplayed("message"),
                 false, "message error was not supposed to be displayed");
         logger.info("Message error is not displayed");
     }
 
-    @Test(invocationCount = 5)
-    public void testContactPageHappyPath() {
-        Map<String, String> testData = Map.of("forename","John",
-                "email", "test_example@example.com",
-                "message", "Some text");
+    @Test(invocationCount = 5, dataProvider = "contact", dataProviderClass = JupiterDataProvider.class)
+    public void testContactPageHappyPath(String forename, String email, String message) {
         HomePage homePage = new HomePage(webDriver);
         homePage.clickContactLink();
         ContactPage contactPage = new ContactPage(webDriver);
-        contactPage.enterForename(testData.get("forename"));
-        contactPage.enterEmail(testData.get("email"));
-        contactPage.enterMessage(testData.get("message"));
+        contactPage.enterForename(forename);
+        contactPage.enterEmail(email);
+        contactPage.enterMessage(message);
         contactPage.clickSubmit();
-        Assert.assertEquals(contactPage.verifySuccessMsgDisplayed(testData.get("forename")),
+        Assert.assertEquals(contactPage.verifySuccessMsgDisplayed(forename),
                 true, "Success message is not displayed");
     }
 
-    @Test
-    public void testCartTotalAmount() {
-        Map<String, Integer> testData = Map.of("Stuffed Frog",2,
-                "Fluffy Bunny", 5,
-                "Valentine Bear", 3);
+    @Test(dataProvider = "shoppingCart", dataProviderClass = JupiterDataProvider.class)
+    public void testCartTotalAmount(Map<String, Integer> testData) {
         HomePage homePage = new HomePage(webDriver);
         homePage.clickStartShoppingBtn();
         ShoppingPage shoppingPage = new ShoppingPage(webDriver);
