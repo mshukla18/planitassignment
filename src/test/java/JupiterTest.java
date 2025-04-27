@@ -25,11 +25,13 @@ public class JupiterTest {
     final String propertyFileLocation = "src/test/resources/test.properties";
 
     @Parameters("browser")
+
     @BeforeClass
-    void setup(String browser) throws IOException {
+    void setup(@Optional String browser) throws IOException {
         properties = new Properties();
         FileReader reader = new FileReader(propertyFileLocation);
         properties.load(reader);
+        browser = browser!=null ? browser : "chrome";
 
         webDriver = getDriver(browser);
     }
@@ -43,7 +45,6 @@ public class JupiterTest {
     void cleanup() {
         webDriver.close();
     }
-
 
     WebDriver getDriver(String browser) {
         switch (browser) {
@@ -121,6 +122,7 @@ public class JupiterTest {
         });
         shoppingPage.clickCartButton();
         CartPage cartPage = new CartPage(webDriver);
+
         testData.forEach((k,v) -> {
             HashMap<String, String> cartItem = cartPage.getItemDetails(k);
             Assert.assertEquals(cartItem.get("itemPrice"), itemPrice.get(k),
@@ -130,11 +132,15 @@ public class JupiterTest {
                     "Quantity of item " + k + " does not match the test data");
             logger.info("Quantity of item " + k + " is correct");
             Double calculatedSubTotal = Double.parseDouble(cartItem.get("itemPrice").substring(1)) * testData.get(k);
+
             Assert.assertEquals(cartItem.get("itemSubTotal").substring(1), calculatedSubTotal.toString(),
                     "Subtotal of item " + " does not match");
             logger.info("Subtotal of item " + k + " is correct");
+
         });
+        Assert.assertEquals(cartPage.getTotalOfSubTotal(), Double.parseDouble(cartPage.getTotalOnPage())
+                , "Total on page does not match");
+        logger.info("Total is correct");
     }
 
-    //static void assertString(String expectedVal, String actualVal, String )
 }

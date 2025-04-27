@@ -21,6 +21,12 @@ public class CartPage extends BasePage {
     @FindBy(how = How.XPATH, using = "//a[text()='Check Out']")
     private WebElement checkOutBtn;
 
+    @FindBy(how=How.XPATH, using = "//strong[contains(@class, 'total')]")
+    private WebElement total;
+
+    @FindBy(how=How.XPATH, using = "//td[4]")
+    private List<WebElement> subTotalColumn;
+
     public CartPage(WebDriver webDriver) {
         super(webDriver);
         PageFactory.initElements(webDriver, this);
@@ -45,5 +51,14 @@ public class CartPage extends BasePage {
             } catch (Exception e) { }
         }
         return null;
+    }
+
+    public String getTotalOnPage() {
+        return total.getText().substring(7);
+    }
+    public Double getTotalOfSubTotal() {
+        return subTotalColumn.stream().map(value -> Double.parseDouble(value.getText().substring(1)) )
+                .reduce(0.00, Double::sum);
+
     }
 }
